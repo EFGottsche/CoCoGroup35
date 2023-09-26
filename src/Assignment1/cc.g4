@@ -44,3 +44,5 @@ ALLOCATE : '->' ;
 DOT : '.';
 WHITESPACE : [ \t\n]+ -> skip;
 
+COMMENT : '//' ~[\n]* -> skip;
+LONGCOMMENT : '/*' (~[*] | '*'~[/])* '*/' -> skip;
