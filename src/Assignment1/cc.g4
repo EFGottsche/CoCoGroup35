@@ -2,7 +2,7 @@ grammar cc;
 
 start   : (OPERATOR | NOT | IDENTIFIER | INT | FLOAT | WHITESPACE 
     | COMMENT | LONGCOMMENT | EQUALS 
-    | ASSIGN | ALLOCATE | DOT | '.update' updatedecl | '.latches' latchdec1) * EOF;
+    | ASSIGN | ALLOCATE | DOT | '.update' updatedecl | '.latches' latchdec1 | '.simulate' stimdec1) * EOF;
 
 OPERATOR: '&&' | '||' ;
 NOT: '!';
@@ -15,7 +15,7 @@ latchdec1: latches+ ;
 latches: IDENTIFIER ALLOCATE IDENTIFIER ;
 
 stimdec1: simulate+ ;
-simulate: 
+simulate: exp ASSIGN INT ;
 
 
 exp : IDENTIFIER 
