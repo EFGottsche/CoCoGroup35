@@ -19,7 +19,7 @@ outdec1: outputs+ ;
 outputs: IDENTIFIER+ ;
 
 updatedecl: update+ ;
-update: exp ALLOCATE exp ;
+update: exp ASSIGN exp  ;
 
 latchdec1: latches+ ;
 latches: IDENTIFIER ALLOCATE exp ;
@@ -28,8 +28,8 @@ simdec1: simulate+ ;
 simulate: exp ASSIGN INT ;
 
 
-exp : IDENTIFIER 
-    | INT 
+exp : IDENTIFIER
+    | INT
     | exp OPERATOR exp
     | NOT exp
     | exp ALLOCATE exp
