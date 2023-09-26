@@ -18,13 +18,13 @@ updates: IDENTIFIER '=' exp;
 simulate: '.simulate' simulations+ ;
 simulations: exp '=' INT ;
 
-exp : x=IDENTIFIER                              // Variable
-    | i=INT                                     // Constant
-    | op='!' e=exp                              // Not, the special not
-    | e1=exp op='&&' e2=exp                     // Boolean Expression
-    | e1=exp op='||' e2=exp                     // Boolean Expression
-    | e1=exp op='->' e2=exp                     // Memory, flip flop = strandsandal
-    | '(' e = exp ')' ;                         // Paranthesis
+exp : x=IDENTIFIER              # Variable                // Variable
+    | i=INT                     # Constant                // Constant
+    | op='!' e=exp              # Not                // Not, the special not
+    | e1=exp op='&&' e2=exp     # BoolAnd                // Boolean Expression
+    | e1=exp op='||' e2=exp     # BoolOr                // Boolean Expression
+    | e1=exp op='->' e2=exp     # Allocate                // Memory, flip flop = strandsandal
+    | '(' e = exp ')'           # Parathesis ;              // Paranthesis
 
 
 IDENTIFIER : [a-zA-Z] [a-zA-Z_0-9^ ]* ;
