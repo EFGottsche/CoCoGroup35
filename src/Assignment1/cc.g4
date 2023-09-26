@@ -2,30 +2,30 @@ grammar cc;
 
 start   : (OPERATOR | NOT | IDENTIFIER | INT | FLOAT | WHITESPACE 
     | COMMENT | LONGCOMMENT | EQUALS 
-    | ASSIGN | ALLOCATE | DOT | '.update' updatedecl | '.latches' latchdec1 | '.simulate' simdec1 | '.hardware' harddec1 
-	| '.inputs' inpdec1 | '.outputs' outdec1) * EOF;
+    | ASSIGN | ALLOCATE | DOT | update | latch |  simulate | hardware
+	| input | output) * EOF ;
 
 OPERATOR: '&&' | '||' ;
 NOT: '!';
 //COMMAND :  '.'IDENTIFIER ;
 
 harddec1: hardware+ ;
-hardware: IDENTIFIER+ ;
+hardware: '.hardware' IDENTIFIER+ ;
 
-inpdec1: inputs+ ;
+input: '.inputs' inputs+ ;
 inputs: IDENTIFIER+ ; 
 
-outdec1: outputs+ ;
+output: '.outputs' outputs+ ;
 outputs: IDENTIFIER+ ;
 
-latchdec1: latches+ ;
+latch: '.latches' latches+ ;
 latches: exp ALLOCATE exp ;
 
-updatedecl: update+ ;
-update: IDENTIFIER ASSIGN exp;
+update: '.update' updates+;
+updates: IDENTIFIER ASSIGN exp;
 
-simdec1: simulate+ ;
-simulate: exp ASSIGN INT ;
+simulate: '.simulate' simulations+ ;
+simulations: exp ASSIGN INT ;
 
 exp : IDENTIFIER
     | INT
