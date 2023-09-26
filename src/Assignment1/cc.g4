@@ -18,15 +18,14 @@ inputs: IDENTIFIER+ ;
 outdec1: outputs+ ;
 outputs: IDENTIFIER+ ;
 
-updatedecl: update+ ;
-update: exp ASSIGN exp  ;
-
 latchdec1: latches+ ;
-latches: IDENTIFIER ALLOCATE exp ;
+latches: exp ALLOCATE exp ;
+
+updatedecl: update+ ;
+update: IDENTIFIER ASSIGN exp;
 
 simdec1: simulate+ ;
 simulate: exp ASSIGN INT ;
-
 
 exp : IDENTIFIER
     | INT
