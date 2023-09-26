@@ -24,7 +24,7 @@ update: exp ALLOCATE exp ;
 latchdec1: latches+ ;
 latches: IDENTIFIER ALLOCATE exp ;
 
-stimdec1: simulate+ ;
+simdec1: simulate+ ;
 simulate: exp ASSIGN INT ;
 
 
