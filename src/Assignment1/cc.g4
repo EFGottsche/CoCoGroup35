@@ -1,47 +1,41 @@
 grammar cc;
 
-start   : (OPERATOR | NOT | IDENTIFIER | INT | FLOAT | WHITESPACE 
-    | COMMENT | LONGCOMMENT | EQUALS 
-    | ASSIGN | ALLOCATE | DOT | update | latch |  simulate | hardware
-	| input | output) * EOF ;
+start   : (IDENTIFIER | INT | FLOAT | WHITESPACE | COMMENT | LONGCOMMENT | EQUALS
+    | update | latch |  simulate | hardware | input | output) * EOF ;
 
-OPERATOR: '&&' | '||' ;
-NOT: '!';
-//COMMAND :  '.'IDENTIFIER ;
-
-harddec1: hardware+ ;
 hardware: '.hardware' IDENTIFIER+ ;
 
-input: '.inputs' inputs+ ;
-inputs: IDENTIFIER+ ; 
+input: '.inputs' IDENTIFIER+ ;
 
-output: '.outputs' outputs+ ;
-outputs: IDENTIFIER+ ;
+output: '.outputs' IDENTIFIER+ ;
 
 latch: '.latches' latches+ ;
-latches: exp ALLOCATE exp ;
+latches: exp '->' exp ;
 
 update: '.update' updates+;
-updates: IDENTIFIER ASSIGN exp;
+updates: IDENTIFIER '=' exp;
 
 simulate: '.simulate' simulations+ ;
-simulations: exp ASSIGN INT ;
+simulations: exp '=' INT ;
 
-exp : IDENTIFIER
-    | INT
-    | exp OPERATOR exp
-    | NOT exp
-    | exp ALLOCATE exp
-    | DOT IDENTIFIER ;
+exp : x=IDENTIFIER                              // Variable
+    | i=INT                                     // Constant
+    | op='!' e=exp                              // Not, the special not
+    | e1=exp op='&&' e2=exp                     // Boolean Expression
+    | e1=exp op='||' e2=exp                     // Boolean Expression
+    | e1=exp op='->' e2=exp                     // Memory, flip flop = strandsandal
+    | '(' e = exp ')' ;                         // Paranthesis
 
-IDENTIFIER : [a-zA-Z] [a-zA-Z_0-9]* ;  // x17y
+
+IDENTIFIER : [a-zA-Z] [a-zA-Z_0-9^ ]* ;
 INT        : [0-9]+ ;
 FLOAT      : [0-9]+ '.' [0-9]+ ;
 
 EQUALS : '==' ;
-ASSIGN : '=' ;
-ALLOCATE : '->' ;
-DOT : '.';
+//ASSIGN : '=' ;
+//ALLOCATE : '->' ;
+//DOT : '.';
+
 WHITESPACE : [ \t\n]+ -> skip;
 
 COMMENT : '//' ~[\n]* -> skip;
