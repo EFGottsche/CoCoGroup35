@@ -53,98 +53,113 @@ public class main {
 // This is parameterized over a return type "<T>" which is in our case
 // simply a Double.
 
-class Interpreter<T> extends AbstractParseTreeVisitor<T> implements ccVisitor<T> {
+class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<String> {
+    private Environment environment;
+    Interpreter(){
+       this.environment = new Environment();
+    }
+
     @Override
-    public T visitStart(ccParser.StartContext ctx) {
+    public String visitStart(ccParser.StartContext ctx) {
         ParseTree p = ctx.children.remove(0);
         return visit(p);
     }
 
     @Override
-    public T visitHardware(ccParser.HardwareContext ctx) {
+    public String visitHardware(ccParser.HardwareContext ctx) {
         ParseTree p = ctx.getChild(0);
-        ParseTree p1 = p.getParent().getParent().getChild(0);
-        return visit(p1);
+        if(p!=null){
+            for(ParseTree child : ctx.children){
+                p=child;
+                System.out.println(p.getText());
+            }
+        }
+        return visit(ctx.parent);
     }
 
     @Override
-    public T visitInput(ccParser.InputContext ctx) {
-        List<ParseTree> p = ctx.children;
-        //String identifier = ctx.IDENTIFIER(0);
-        System.out.println(p.size());
+    public String visitInput(ccParser.InputContext ctx) {
+        //TODO implement input holder, we need an environment!
+        String[] inputs = ctx.stop.getText().split(" ");
+        for(String input : inputs){
+            environment.setOutput(input);
+        }
+        return visit(ctx.parent);
+    }
+
+    @Override
+    public String visitOutput(ccParser.OutputContext ctx) {
+        //TODO implement output holders, we need an environment!!
+        String[] outputs = ctx.stop.getText().split(" ");
+        for(String output : outputs){
+            environment.setOutput(output);
+        }
         return visit(ctx.getChild(0).getParent().getParent());
     }
 
     @Override
-    public T visitOutput(ccParser.OutputContext ctx) {
-        List<ParseTree> p = ctx.children;
-        System.out.println(p.size());
-        return visit(ctx.getChild(0).getParent().getParent());
-    }
-
-    @Override
-    public T visitLatch(ccParser.LatchContext ctx) {
+    public String visitLatch(ccParser.LatchContext ctx) {
         //ctx.latches()
         return null;
     }
 
     @Override
-    public T visitLatches(ccParser.LatchesContext ctx) {
+    public String visitLatches(ccParser.LatchesContext ctx) {
         return null;
     }
 
     @Override
-    public T visitUpdate(ccParser.UpdateContext ctx) {
+    public String visitUpdate(ccParser.UpdateContext ctx) {
         return null;
     }
 
     @Override
-    public T visitUpdates(ccParser.UpdatesContext ctx) {
+    public String visitUpdates(ccParser.UpdatesContext ctx) {
         return null;
     }
 
     @Override
-    public T visitSimulate(ccParser.SimulateContext ctx) {
+    public String visitSimulate(ccParser.SimulateContext ctx) {
         return null;
     }
 
     @Override
-    public T visitSimulations(ccParser.SimulationsContext ctx) {
+    public String visitSimulations(ccParser.SimulationsContext ctx) {
         return null;
     }
 
     @Override
-    public T visitNot(ccParser.NotContext ctx) {
+    public String visitNot(ccParser.NotContext ctx) {
         return null;
     }
 
     @Override
-    public T visitVariable(ccParser.VariableContext ctx) {
+    public String visitVariable(ccParser.VariableContext ctx) {
         return null;
     }
 
     @Override
-    public T visitParathesis(ccParser.ParathesisContext ctx) {
+    public String visitParathesis(ccParser.ParathesisContext ctx) {
         return null;
     }
 
     @Override
-    public T visitConstant(ccParser.ConstantContext ctx) {
+    public String visitConstant(ccParser.ConstantContext ctx) {
+        return ctx.i.getText();
+    }
+
+    @Override
+    public String visitBoolOr(ccParser.BoolOrContext ctx) {
         return null;
     }
 
     @Override
-    public T visitBoolOr(ccParser.BoolOrContext ctx) {
+    public String visitBoolAnd(ccParser.BoolAndContext ctx) {
         return null;
     }
 
     @Override
-    public T visitBoolAnd(ccParser.BoolAndContext ctx) {
-        return null;
-    }
-
-    @Override
-    public T visitAllocate(ccParser.AllocateContext ctx) {
+    public String visitAllocate(ccParser.AllocateContext ctx) {
         return null;
     }
 
