@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
+import java.util.List;
 
 public class main {
     public static void main(String[] args) throws IOException{
@@ -42,7 +43,7 @@ public class main {
 
         // Construct an interpreter and run it on the parse tree
         Interpreter interpreter = new Interpreter();
-        Double result=interpreter.visit(parseTree);
+        Object result=interpreter.visit(parseTree);
         System.out.println("The result is: "+result);
     }
 }
@@ -52,91 +53,101 @@ public class main {
 // This is parameterized over a return type "<T>" which is in our case
 // simply a Double.
 
-class Interpreter extends AbstractParseTreeVisitor<Double> implements ccVisitor<Double> {
+class Interpreter<T> extends AbstractParseTreeVisitor<T> implements ccVisitor<T> {
     @Override
-    public Double visitStart(ccParser.StartContext ctx) {
+    public T visitStart(ccParser.StartContext ctx) {
+        ParseTree p = ctx.children.remove(0);
+        return visit(p);
+    }
+
+    @Override
+    public T visitHardware(ccParser.HardwareContext ctx) {
+        ParseTree p = ctx.getChild(0);
+        ParseTree p1 = p.getParent().getParent().getChild(0);
+        return visit(p1);
+    }
+
+    @Override
+    public T visitInput(ccParser.InputContext ctx) {
+        List<ParseTree> p = ctx.children;
+        //String identifier = ctx.IDENTIFIER(0);
+        System.out.println(p.size());
+        return visit(ctx.getChild(0).getParent().getParent());
+    }
+
+    @Override
+    public T visitOutput(ccParser.OutputContext ctx) {
+        List<ParseTree> p = ctx.children;
+        System.out.println(p.size());
+        return visit(ctx.getChild(0).getParent().getParent());
+    }
+
+    @Override
+    public T visitLatch(ccParser.LatchContext ctx) {
+        //ctx.latches()
         return null;
     }
 
     @Override
-    public Double visitHardware(ccParser.HardwareContext ctx) {
+    public T visitLatches(ccParser.LatchesContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitInput(ccParser.InputContext ctx) {
+    public T visitUpdate(ccParser.UpdateContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitOutput(ccParser.OutputContext ctx) {
+    public T visitUpdates(ccParser.UpdatesContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitLatch(ccParser.LatchContext ctx) {
+    public T visitSimulate(ccParser.SimulateContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitLatches(ccParser.LatchesContext ctx) {
+    public T visitSimulations(ccParser.SimulationsContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitUpdate(ccParser.UpdateContext ctx) {
+    public T visitNot(ccParser.NotContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitUpdates(ccParser.UpdatesContext ctx) {
+    public T visitVariable(ccParser.VariableContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitSimulate(ccParser.SimulateContext ctx) {
+    public T visitParathesis(ccParser.ParathesisContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitSimulations(ccParser.SimulationsContext ctx) {
+    public T visitConstant(ccParser.ConstantContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitNot(ccParser.NotContext ctx) {
+    public T visitBoolOr(ccParser.BoolOrContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitVariable(ccParser.VariableContext ctx) {
+    public T visitBoolAnd(ccParser.BoolAndContext ctx) {
         return null;
     }
 
     @Override
-    public Double visitParathesis(ccParser.ParathesisContext ctx) {
+    public T visitAllocate(ccParser.AllocateContext ctx) {
         return null;
     }
 
-    @Override
-    public Double visitConstant(ccParser.ConstantContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Double visitBoolOr(ccParser.BoolOrContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Double visitBoolAnd(ccParser.BoolAndContext ctx) {
-        return null;
-    }
-
-    @Override
-    public Double visitAllocate(ccParser.AllocateContext ctx) {
-        return null;
-    }
     // todo - Java will complain that "Interpreter" does not in fact
     // implement "ccVisitor" at the moment.
 
