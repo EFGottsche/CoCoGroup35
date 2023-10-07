@@ -82,7 +82,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         //TODO implement input holder, we need an environment!
         String[] inputs = ctx.stop.getText().split(" ");
         for(String input : inputs){
-            environment.setOutput(input);
+            environment.setInput(input,"0");
         }
         return visit(ctx.parent);
     }
@@ -92,14 +92,19 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         //TODO implement output holders, we need an environment!!
         String[] outputs = ctx.stop.getText().split(" ");
         for(String output : outputs){
-            environment.setOutput(output);
+            environment.setOutput(output,"0");
         }
-        return visit(ctx.getChild(0).getParent().getParent());
+        return visit(ctx.parent);
     }
 
     @Override
     public String visitLatch(ccParser.LatchContext ctx) {
-        //ctx.latches()
+
+        for(ParseTree latch : ctx.latches()){
+            String left = latch.getChild(0).getText().strip();
+            String right = latch.getChild(2).getText().strip();
+            environment.setLatch(left,right);
+        }
         return null;
     }
 
