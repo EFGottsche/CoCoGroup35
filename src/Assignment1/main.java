@@ -100,17 +100,22 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     @Override
     public String visitLatch(ccParser.LatchContext ctx) {
 
-        for(ParseTree latch : ctx.latches()){
+        /*for(ParseTree latch : ctx.latches()){
             String left = latch.getChild(0).getText().strip();
             String right = latch.getChild(2).getText().strip();
             environment.setLatch(left,right);
+        }*/
+        ParseTree p = ctx.children.remove(0);
+        if(p.getText().equalsIgnoreCase(".latches")){
+            p = ctx.children.remove((0));
         }
-        return null;
+        return visit(p);
     }
 
     @Override
     public String visitLatches(ccParser.LatchesContext ctx) {
-        return null;
+        System.out.println(ctx.start.getText()+"->"+ctx.stop.getText());
+        return visit(ctx.getParent());
     }
 
     @Override
