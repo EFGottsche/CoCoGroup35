@@ -1,21 +1,20 @@
 grammar cc;
 
-start   : (IDENTIFIER | INT | FLOAT | WHITESPACE | COMMENT | LONGCOMMENT | EQUALS
-    | update | latch |  simulate | hardware | input | output) * EOF ;
+start   : h=hardware i=input o=output l=latch u=update s=simulate EOF ;
 
-hardware: '.hardware' IDENTIFIER+ ;
+hardware: '.hardware' hardw=IDENTIFIER ;
 
-input: '.inputs' IDENTIFIER+ ;
+input: '.inputs' ins+=IDENTIFIER+ ; //+= means a list of inputs
 
-output: '.outputs' IDENTIFIER+ ;
+output: '.outputs' outs+=IDENTIFIER+ ; //+= means a list of outputs
 
-latch: '.latches' latches+ ;
+latch: '.latches' lats+=latches+ ; //+= means a list of latches
 latches: exp '->' exp ;
 
-update: '.update' updates+;
+update: '.update' ups+=updates+;
 updates: IDENTIFIER '=' exp;
 
-simulate: '.simulate' simulations+ ;
+simulate: '.simulate' sims+=simulations+ ;
 simulations: exp '=' INT ;
 
 exp : x=IDENTIFIER              # Variable                // Variable

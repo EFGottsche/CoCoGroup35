@@ -1,19 +1,20 @@
 package Assignment1;
 
+
 import Assignment1.gen.Assignment1.ccLexer;
 import Assignment1.gen.Assignment1.ccParser;
 import Assignment1.gen.Assignment1.ccVisitor;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
-import java.util.List;
 
 public class main {
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
 
         // we expect exactly one argument: the name of the input file
         if (args.length!=1) {
@@ -54,37 +55,44 @@ public class main {
 // simply a Double.
 
 class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<String> {
-    private Environment environment;
+    /*private Environment environment;
     Interpreter(){
        this.environment = new Environment();
-    }
+    }*/
 
     @Override
     public String visitStart(ccParser.StartContext ctx) {
-        ParseTree p = ctx.children.remove(0);
-        return visit(p);
+
+        String hw = visit(ctx.h);
+        String input = visit(ctx.i);
+        System.out.println(input);
+        return "nul";
     }
 
     @Override
     public String visitHardware(ccParser.HardwareContext ctx) {
-        ParseTree p = ctx.getChild(0);
+        /*ParseTree p = ctx.getChild(0);
         if(p!=null){
             for(ParseTree child : ctx.children){
                 p=child;
                 System.out.println(p.getText());
             }
-        }
-        return visit(ctx.parent);
+        }*/
+        //System.out.println(ctx.hardw.getText());
+        return String.valueOf(ctx.hardw);
     }
 
     @Override
     public String visitInput(ccParser.InputContext ctx) {
         //TODO implement input holder, we need an environment!
-        String[] inputs = ctx.stop.getText().split(" ");
+       /* String[] inputs = ctx.stop.getText().split(" ");
         for(String input : inputs){
             environment.setInput(input,"0");
+        }*/
+        for(Token t : ctx.ins){
+            System.out.println(t.getText());
         }
-        return visit(ctx.parent);
+        return String.valueOf(ctx.ins.toString());
     }
 
     @Override
@@ -92,7 +100,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         //TODO implement output holders, we need an environment!!
         String[] outputs = ctx.stop.getText().split(" ");
         for(String output : outputs){
-            environment.setOutput(output,"0");
+            //environment.setOutput(output,"0");
         }
         return visit(ctx.parent);
     }
@@ -105,7 +113,13 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
             String right = latch.getChild(2).getText().strip();
             environment.setLatch(left,right);
         }*/
-        ParseTree p = ctx.children.remove(0);
+        ParseTree p;
+        if(!ctx.children.isEmpty()){
+            p = ctx.children.remove(0);
+        }else{
+            return visit(ctx.getParent().getChild(0));
+        }
+
         if(p.getText().equalsIgnoreCase(".latches")){
             p = ctx.children.remove((0));
         }
@@ -120,11 +134,29 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitUpdate(ccParser.UpdateContext ctx) {
-        return null;
+        ParseTree p;
+        if(!ctx.children.isEmpty()){
+            p = ctx.children.remove(0);
+        }else{
+            return visit(ctx.getParent().getChild(0));
+        }
+
+        if(p.getText().equalsIgnoreCase(".update")){
+            p = ctx.children.remove((0));
+        }
+        //System.out.println(ctx.start.getText());
+        return visit(p);
     }
 
     @Override
     public String visitUpdates(ccParser.UpdatesContext ctx) {
+        ParseTree pLeft = ctx.children.remove(0);
+        ParseTree pMiddle = ctx.children.remove(0);
+        ParseTree pRight = ctx.children.remove(0);
+        String left = ctx.children.remove(0).getText();
+        String middle = ctx.children.remove(0).getText();
+        String right = ctx.children.remove(0).getText();
+        System.out.println(left+middle+right);
         return null;
     }
 
