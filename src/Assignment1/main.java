@@ -55,17 +55,23 @@ public class main {
 // simply a Double.
 
 class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<String> {
-    /*private Environment environment;
     Interpreter(){
-       this.environment = new Environment();
-    }*/
+        Environment environment = new Environment();
+    }
 
     @Override
     public String visitStart(ccParser.StartContext ctx) {
-        String hardware = visit(ctx.h);
-        String input = visit(ctx.i);
-        System.out.println(input);
-        return "nul";
+        String hardware, input, output, latches, update, simulate;
+
+        hardware = visit(ctx.h);
+        input = visit(ctx.i);
+        output = visit(ctx.o);
+        latches = visit(ctx.l);
+        update = visit(ctx.u);
+        simulate = visit(ctx.s);
+
+        System.out.println(input + " line 67");
+        return hardware + input + output + latches + update + simulate;
     }
 
     @Override
@@ -75,21 +81,30 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitInput(ccParser.InputContext ctx) {
-        //TODO implement input holder, we need an environment!
+        String output = "";
         for(Token t : ctx.ins){
-            System.out.println(t.getText());
+            output += t.getText() + "\n";
         }
-        return String.valueOf(ctx.ins.toString());
+        return output;
     }
 
     @Override
     public String visitOutput(ccParser.OutputContext ctx) {
-        //TODO implement output holders, we need an environment!!
+        String output = "";
+        for(Token t : ctx.outs){
+            output += t.getText() + "\n";
+        }
+        System.out.println(output);
+        return output;
+
+        /*
         String[] outputs = ctx.stop.getText().split(" ");
         for(String output : outputs){
             //environment.setOutput(output,"0");
         }
         return visit(ctx.parent);
+
+         */
     }
 
     @Override
@@ -227,6 +242,27 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         System.out.println("Parentheses");
         return visit(ctx.e);}*/
 
+    private class CalculationStructure{
+        public CalculationStructure(Boolean output, String name, String updateStructure){
+            this.output = output;
+            this.name = name;
+            this.updateStructure = updateStructure;
+        }
+        boolean output;
+        String name;
+        String updateStructure;
+
+        public String calculate(){
+            return "";
+        }
+
+        @Override
+        public String toString() {
+            return calculate() +" " + name;
+        }
+
+
+    }
 
 
 
