@@ -19,6 +19,7 @@ public class main {
     public static HashMap<String,String> inputs = new HashMap<>();
     public static HashMap<String,String> outputs = new HashMap<>();
     public static HashMap<String,String> latches = new HashMap<>();
+    public static HashMap<String,String> updates = new HashMap<>();
     public static void main(String[] args) throws IOException {
 
         // we expect exactly one argument: the name of the input file
@@ -116,12 +117,6 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitLatch(ccParser.LatchContext ctx) {
-
-        /*for(ParseTree latch : ctx.latches()){
-            String left = latch.getChild(0).getText().strip();
-            String right = latch.getChild(2).getText().strip();
-            environment.setLatch(left,right);
-        }*/
         ParseTree p;
         if(!ctx.children.isEmpty()){
             p = ctx.children.remove(0);
@@ -137,7 +132,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitLatches(ccParser.LatchesContext ctx) {
-        System.out.println(ctx.start.getText()+"->"+ctx.stop.getText());
+        main.latches.putIfAbsent(ctx.stop.getText(), "0");
         return visit(ctx.getParent());
     }
 
@@ -168,6 +163,13 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     public String visitSimulations(ccParser.SimulationsContext ctx) {
         //environment.setSim(ctx.getText)
         //visit()
+        for (int i = 0; i < ctx.getText().length(); i++){
+
+            for(var latch : main.latches.entrySet()){
+                latch.setValue(main.updates.get(latch.getKey().substring(0,latch.getKey().length()-1)));
+            }
+        }
+
         return null;
     }
 
