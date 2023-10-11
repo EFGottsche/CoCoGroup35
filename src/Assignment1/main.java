@@ -63,15 +63,15 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     public String visitStart(ccParser.StartContext ctx) {
         String hardware, input, output, latches, update, simulate;
 
-        hardware = visit(ctx.h);
+        /*hardware = visit(ctx.h);
         input = visit(ctx.i);
         output = visit(ctx.o);
-        latches = visit(ctx.l);
+        latches = visit(ctx.l);*/
         update = visit(ctx.u);
-        simulate = visit(ctx.s);
+        /*simulate = visit(ctx.s);
 
-        System.out.println(input + " line 67");
-        return hardware + input + output + latches + update + simulate;
+        System.out.println(input + " line 67");*/
+        return null; //hardware + input + output + latches + update + simulate;
     }
 
     @Override
@@ -136,49 +136,43 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitUpdate(ccParser.UpdateContext ctx) {
-        ParseTree p;
-        if(!ctx.children.isEmpty()){
-            p = ctx.children.remove(0);
-        }else{
-            return visit(ctx.getParent().getChild(0));
+        for(ccParser.UpdatesContext upd : ctx.ups){
+            visit(upd);
         }
-
-        if(p.getText().equalsIgnoreCase(".update")){
-            p = ctx.children.remove((0));
-        }
-        //System.out.println(ctx.start.getText());
-        return visit(p);
+        return null;
     }
 
     @Override
     public String visitUpdates(ccParser.UpdatesContext ctx) {
-        ParseTree pLeft = ctx.children.remove(0);
-        ParseTree pMiddle = ctx.children.remove(0);
-        ParseTree pRight = ctx.children.remove(0);
-        String left = ctx.children.remove(0).getText();
-        String middle = ctx.children.remove(0).getText();
-        String right = ctx.children.remove(0).getText();
-        System.out.println(left+middle+right);
+        ccParser.ExpContext s = ctx.exp();
+        visit(s);
         return null;
     }
 
     @Override
     public String visitSimulate(ccParser.SimulateContext ctx) {
+        for(ccParser.SimulationsContext sim : ctx.sims){
+            visit(sim);
+        }
         return null;
     }
 
     @Override
     public String visitSimulations(ccParser.SimulationsContext ctx) {
+        //environment.setSim(ctx.getText)
+        //visit()
         return null;
     }
 
     @Override
     public String visitNot(ccParser.NotContext ctx) {
-        return null;
+        return String.valueOf(!Boolean.parseBoolean(visit(ctx.exp())));
     }
 
     @Override
     public String visitVariable(ccParser.VariableContext ctx) {
+        ctx.IDENTIFIER();
+
         return null;
     }
 
@@ -194,12 +188,20 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitBoolOr(ccParser.BoolOrContext ctx) {
-        return null;
+        ccParser.ExpContext e1 = ctx.e1;
+        Boolean resE1 = Boolean.parseBoolean(visit(e1));
+        ccParser.ExpContext e2 = ctx.e2;
+        Boolean resE2 = Boolean.parseBoolean(visit(e2));
+        return String.valueOf(resE1 || resE2);
     }
 
     @Override
     public String visitBoolAnd(ccParser.BoolAndContext ctx) {
-        return null;
+        ccParser.ExpContext e1 = ctx.e1;
+        Boolean resE1 = Boolean.parseBoolean(visit(e1));
+        ccParser.ExpContext e2 = ctx.e2;
+        Boolean resE2 = Boolean.parseBoolean(visit(e2));
+        return String.valueOf(resE1 && resE2);
     }
 
     @Override
