@@ -96,7 +96,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     public String visitInput(ccParser.InputContext ctx) {
         String input = "";
         for(Token t : ctx.ins){
-            main.inputs.putIfAbsent(t.getText(), "0");
+            main.inputs.putIfAbsent(t.getText(), "");
             input += t.getText() + "\n";
         }
         return input;
@@ -106,7 +106,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     public String visitOutput(ccParser.OutputContext ctx) {
         String output = "";
         for(Token t : ctx.outs){
-            main.outputs.putIfAbsent(t.getText(), "0");
+            main.outputs.putIfAbsent(t.getText(), "");
             output += t.getText() + "\n";
         }
 
