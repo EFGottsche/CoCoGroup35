@@ -62,8 +62,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitStart(ccParser.StartContext ctx) {
-
-        String hw = visit(ctx.h);
+        String hardware = visit(ctx.h);
         String input = visit(ctx.i);
         System.out.println(input);
         return "nul";
@@ -71,24 +70,12 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitHardware(ccParser.HardwareContext ctx) {
-        /*ParseTree p = ctx.getChild(0);
-        if(p!=null){
-            for(ParseTree child : ctx.children){
-                p=child;
-                System.out.println(p.getText());
-            }
-        }*/
-        //System.out.println(ctx.hardw.getText());
-        return String.valueOf(ctx.hardw);
+        return ctx.hardw.getText();
     }
 
     @Override
     public String visitInput(ccParser.InputContext ctx) {
         //TODO implement input holder, we need an environment!
-       /* String[] inputs = ctx.stop.getText().split(" ");
-        for(String input : inputs){
-            environment.setInput(input,"0");
-        }*/
         for(Token t : ctx.ins){
             System.out.println(t.getText());
         }
