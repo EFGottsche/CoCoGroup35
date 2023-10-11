@@ -13,12 +13,22 @@ public class Environment {
     public String getInput(String inputName){
         return this.inputs.get(inputName);
     }
+    public HashMap<String, String> getInputs() {
+        return inputs;
+    }
+
+    public boolean updateMap(){
+        return false;
+    }
 
     public void setOutput(String inputName, String value){
         this.outputs.put(inputName,value);
     }
     public String getOutput(String inputName){
         return this.outputs.get(inputName);
+    }
+    public HashMap<String, String> getOutputs() {
+        return outputs;
     }
 
     public void setLatch(String inputName, String value){
@@ -27,6 +37,10 @@ public class Environment {
     public String getLatch(String inputName){
         return this.latches.get(inputName);
     }
+    public HashMap<String, String> getLatches() {
+        return latches;
+    }
+
 
 
 

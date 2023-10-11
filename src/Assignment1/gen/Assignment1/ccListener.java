@@ -1,4 +1,4 @@
-// Generated from /Users/timmrasmussen/IdeaProjects/CoCoGroup35/src/Assignment1/cc.g4 by ANTLR 4.13.1
+// Generated from C:/Users/esben/Desktop/Skoleting/Sem 5/CoCo/CoCoGroup35/src/Assignment1\cc.g4 by ANTLR 4.10.1
 package Assignment1.gen.Assignment1;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 

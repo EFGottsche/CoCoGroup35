@@ -26,7 +26,8 @@ exp : x=IDENTIFIER              # Variable                // Variable
     | '(' e = exp ')'           # Parathesis ;              // Paranthesis
 
 
-IDENTIFIER : [a-zA-Z] [a-zA-Z_0-9^ ]* ;
+IDENTIFIER :    IDENTIFIERCHARS;
+IDENTIFIERCHARS : [a-zA-Z] [a-zA-Z_0-9]+ ;
 INT        : [0-9]+ ;
 FLOAT      : [0-9]+ '.' [0-9]+ ;
 

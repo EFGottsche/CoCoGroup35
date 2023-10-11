@@ -12,8 +12,13 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class main {
+    public static HashMap<String,String> inputs = new HashMap<>();
+    public static HashMap<String,String> outputs = new HashMap<>();
+    public static HashMap<String,String> latches = new HashMap<>();
     public static void main(String[] args) throws IOException {
 
         // we expect exactly one argument: the name of the input file
@@ -56,22 +61,29 @@ public class main {
 
 class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<String> {
     Interpreter(){
-        Environment environment = new Environment();
     }
 
     @Override
     public String visitStart(ccParser.StartContext ctx) {
+        for (var entry : main.inputs.entrySet()){
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
         String hardware, input, output, latches, update, simulate;
 
-        /*hardware = visit(ctx.h);
+        hardware = visit(ctx.h);
         input = visit(ctx.i);
         output = visit(ctx.o);
-        latches = visit(ctx.l);*/
-        update = visit(ctx.u);
-        /*simulate = visit(ctx.s);
 
-        System.out.println(input + " line 67");*/
-        return null; //hardware + input + output + latches + update + simulate;
+        for (var entry : main.outputs.entrySet()){
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
+        latches = visit(ctx.l);
+        update = visit(ctx.u);
+        simulate = visit(ctx.s);
+
+        return hardware + input + output + latches + update + simulate;
     }
 
     @Override
@@ -81,30 +93,25 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitInput(ccParser.InputContext ctx) {
-        String output = "";
+        String input = "";
         for(Token t : ctx.ins){
-            output += t.getText() + "\n";
+            main.inputs.putIfAbsent(t.getText(), "0");
+            input += t.getText() + "\n";
         }
-        return output;
+        return input;
     }
 
     @Override
     public String visitOutput(ccParser.OutputContext ctx) {
         String output = "";
         for(Token t : ctx.outs){
+            main.outputs.putIfAbsent(t.getText(), "0");
             output += t.getText() + "\n";
         }
-        System.out.println(output);
+
         return output;
 
-        /*
-        String[] outputs = ctx.stop.getText().split(" ");
-        for(String output : outputs){
-            //environment.setOutput(output,"0");
-        }
-        return visit(ctx.parent);
 
-         */
     }
 
     @Override

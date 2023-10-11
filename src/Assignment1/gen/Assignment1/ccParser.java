@@ -1,4 +1,4 @@
-// Generated from /Users/timmrasmussen/IdeaProjects/CoCoGroup35/src/Assignment1/cc.g4 by ANTLR 4.13.1
+// Generated from C:/Users/esben/Desktop/Skoleting/Sem 5/CoCo/CoCoGroup35/src/Assignment1\cc.g4 by ANTLR 4.10.1
 package Assignment1.gen.Assignment1;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ccParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.10.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, T__12=13, IDENTIFIER=14, INT=15, FLOAT=16, 
-		EQUALS=17, WHITESPACE=18, COMMENT=19, LONGCOMMENT=20;
+		T__9=10, T__10=11, T__11=12, T__12=13, IDENTIFIER=14, IDENTIFIERCHARS=15, 
+		INT=16, FLOAT=17, EQUALS=18, WHITESPACE=19, COMMENT=20, LONGCOMMENT=21;
 	public static final int
 		RULE_start = 0, RULE_hardware = 1, RULE_input = 2, RULE_output = 3, RULE_latch = 4, 
 		RULE_latches = 5, RULE_update = 6, RULE_updates = 7, RULE_simulate = 8, 
@@ -36,15 +36,15 @@ public class ccParser extends Parser {
 		return new String[] {
 			null, "'.hardware'", "'.inputs'", "'.outputs'", "'.latches'", "'->'", 
 			"'.update'", "'='", "'.simulate'", "'!'", "'&&'", "'||'", "'('", "')'", 
-			null, null, null, "'=='"
+			null, null, null, null, "'=='"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, "IDENTIFIER", "INT", "FLOAT", "EQUALS", "WHITESPACE", "COMMENT", 
-			"LONGCOMMENT"
+			null, null, "IDENTIFIER", "IDENTIFIERCHARS", "INT", "FLOAT", "EQUALS", 
+			"WHITESPACE", "COMMENT", "LONGCOMMENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -98,7 +98,6 @@ public class ccParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class StartContext extends ParserRuleContext {
 		public HardwareContext h;
 		public InputContext i;
@@ -139,7 +138,7 @@ public class ccParser extends Parser {
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof ccVisitor) return ((ccVisitor<? extends T>)visitor).visitStart(this);
+			if ( visitor instanceof ccVisitor ) return ((ccVisitor<? extends T>)visitor).visitStart(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -177,7 +176,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class HardwareContext extends ParserRuleContext {
 		public Token hardw;
 		public TerminalNode IDENTIFIER() { return getToken(ccParser.IDENTIFIER, 0); }
@@ -223,7 +221,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class InputContext extends ParserRuleContext {
 		public Token IDENTIFIER;
 		public List<Token> ins = new ArrayList<Token>();
@@ -287,7 +284,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class OutputContext extends ParserRuleContext {
 		public Token IDENTIFIER;
 		public List<Token> outs = new ArrayList<Token>();
@@ -351,7 +347,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class LatchContext extends ParserRuleContext {
 		public LatchesContext latches;
 		public List<LatchesContext> lats = new ArrayList<LatchesContext>();
@@ -403,7 +398,7 @@ public class ccParser extends Parser {
 				setState(49); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 53760L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__8) | (1L << T__11) | (1L << IDENTIFIER) | (1L << INT))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -417,7 +412,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class LatchesContext extends ParserRuleContext {
 		public List<ExpContext> exp() {
 			return getRuleContexts(ExpContext.class);
@@ -469,7 +463,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class UpdateContext extends ParserRuleContext {
 		public UpdatesContext updates;
 		public List<UpdatesContext> ups = new ArrayList<UpdatesContext>();
@@ -535,7 +528,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class UpdatesContext extends ParserRuleContext {
 		public TerminalNode IDENTIFIER() { return getToken(ccParser.IDENTIFIER, 0); }
 		public ExpContext exp() {
@@ -585,7 +577,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class SimulateContext extends ParserRuleContext {
 		public SimulationsContext simulations;
 		public List<SimulationsContext> sims = new ArrayList<SimulationsContext>();
@@ -637,7 +628,7 @@ public class ccParser extends Parser {
 				setState(69); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 53760L) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__8) | (1L << T__11) | (1L << IDENTIFIER) | (1L << INT))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -651,7 +642,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class SimulationsContext extends ParserRuleContext {
 		public ExpContext exp() {
 			return getRuleContext(ExpContext.class,0);
@@ -701,7 +691,6 @@ public class ccParser extends Parser {
 		return _localctx;
 	}
 
-	@SuppressWarnings("CheckReturnValue")
 	public static class ExpContext extends ParserRuleContext {
 		public ExpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -713,7 +702,6 @@ public class ccParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class NotContext extends ExpContext {
 		public Token op;
 		public ExpContext e;
@@ -735,7 +723,6 @@ public class ccParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class VariableContext extends ExpContext {
 		public Token x;
 		public TerminalNode IDENTIFIER() { return getToken(ccParser.IDENTIFIER, 0); }
@@ -754,7 +741,6 @@ public class ccParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class ParathesisContext extends ExpContext {
 		public ExpContext e;
 		public ExpContext exp() {
@@ -775,7 +761,6 @@ public class ccParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class ConstantContext extends ExpContext {
 		public Token i;
 		public TerminalNode INT() { return getToken(ccParser.INT, 0); }
@@ -794,7 +779,6 @@ public class ccParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class BoolOrContext extends ExpContext {
 		public ExpContext e1;
 		public Token op;
@@ -820,7 +804,6 @@ public class ccParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class BoolAndContext extends ExpContext {
 		public ExpContext e1;
 		public Token op;
@@ -846,7 +829,6 @@ public class ccParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	@SuppressWarnings("CheckReturnValue")
 	public static class AllocateContext extends ExpContext {
 		public ExpContext e1;
 		public Token op;
@@ -941,7 +923,7 @@ public class ccParser extends Parser {
 			setState(97);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
-			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -1028,7 +1010,7 @@ public class ccParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0014e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\u0015e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0001\u0000\u0001\u0000\u0001"+
@@ -1069,9 +1051,9 @@ public class ccParser extends Parser {
 		"\u0014\n\u0000@\u000f\u0001\u0000\u0000\u0000AC\u0005\b\u0000\u0000BD"+
 		"\u0003\u0012\t\u0000CB\u0001\u0000\u0000\u0000DE\u0001\u0000\u0000\u0000"+
 		"EC\u0001\u0000\u0000\u0000EF\u0001\u0000\u0000\u0000F\u0011\u0001\u0000"+
-		"\u0000\u0000GH\u0003\u0014\n\u0000HI\u0005\u0007\u0000\u0000IJ\u0005\u000f"+
+		"\u0000\u0000GH\u0003\u0014\n\u0000HI\u0005\u0007\u0000\u0000IJ\u0005\u0010"+
 		"\u0000\u0000J\u0013\u0001\u0000\u0000\u0000KL\u0006\n\uffff\uffff\u0000"+
-		"LU\u0005\u000e\u0000\u0000MU\u0005\u000f\u0000\u0000NO\u0005\t\u0000\u0000"+
+		"LU\u0005\u000e\u0000\u0000MU\u0005\u0010\u0000\u0000NO\u0005\t\u0000\u0000"+
 		"OU\u0003\u0014\n\u0005PQ\u0005\f\u0000\u0000QR\u0003\u0014\n\u0000RS\u0005"+
 		"\r\u0000\u0000SU\u0001\u0000\u0000\u0000TK\u0001\u0000\u0000\u0000TM\u0001"+
 		"\u0000\u0000\u0000TN\u0001\u0000\u0000\u0000TP\u0001\u0000\u0000\u0000"+
