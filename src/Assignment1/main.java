@@ -20,7 +20,7 @@ public class main {
     public static LinkedHashMap<String,String> outputs = new LinkedHashMap<>(); //Use LinkedHashMap to preserver the insertion order
     public static HashMap<String,String> latches = new HashMap<>();
     public static LinkedHashMap<String,String> updates = new LinkedHashMap<>();
-    public static HashMap<String,ccParser.UpdatesContext> updatesCtx = new HashMap<>();
+    public static HashMap<String,ccParser.UpdatesContext> updatesCtx = new HashMap<>(); //Interesting...
 
     public static void main(String[] args) throws IOException {
 
@@ -68,9 +68,6 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitStart(ccParser.StartContext ctx) {
-        for (var entry : main.inputs.entrySet()){
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        }
 
         String hardware, input, output, latches, update, simulate;
 
@@ -78,16 +75,32 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         input = visit(ctx.i);
         output = visit(ctx.o);
 
-        for (var entry : main.outputs.entrySet()){
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        }
-
         latches = visit(ctx.l);
+
+        //Convert operators to html
+        latches = latches.replaceAll("->","&rarr;");
+        latches = latches.replaceAll(",","<br>");
+
         update = visit(ctx.u);
-        System.out.println(update);
+
+        //Convert operators to html
+        update = update.replaceAll("&&", "&and;");
+        update = update.replaceAll("\\|\\|","&or;");
+        update = update.replaceAll("=","&equals;");
+        update = update.replaceAll("!","&not;");
+        update = update.replaceAll(",","<br>");
+
         simulate = visit(ctx.s);
 
-        return hardware + input + output + latches + update + simulate;
+        String simulationOutputs = "\n";
+        for(var simOut : main.outputs.entrySet()){
+            simulationOutputs+=simOut.getValue()+" "+simOut.getKey() + "<br>" + "\n";
+        }
+
+        HtmlBody htmlBody = new HtmlBody(hardware,input,output,latches,update,simulate,simulationOutputs);
+
+
+        return htmlBody.getHtml();
     }
 
     @Override
@@ -100,7 +113,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         String input = "";
         for(Token t : ctx.ins){
             main.inputs.putIfAbsent(t.getText(), "");
-            input += t.getText() + "\n";
+            input += t.getText() + " ";
         }
         return input;
     }
@@ -110,7 +123,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         String output = "";
         for(Token t : ctx.outs){
             main.outputs.putIfAbsent(t.getText(), "");
-            output += t.getText() + "\n";
+            output += t.getText() + " ";
         }
 
         return output;
@@ -121,8 +134,13 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     @Override
     public String visitLatch(ccParser.LatchContext ctx) {
         String output = "";
+        ccParser.LatchesContext endCtx = ctx.lats.get(ctx.lats.size()-1);
         for(ccParser.LatchesContext lat : ctx.latches()){
-            output += visit(lat) + "\n";
+            if(lat.equals(endCtx)){
+                output += visit(lat) + "";
+            }else{
+                output += visit(lat) + ",";
+            }
         }
         return output;
     }
@@ -136,9 +154,15 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     @Override
     public String visitUpdate(ccParser.UpdateContext ctx) {
         String output = "";
+        ccParser.UpdatesContext endCtx = ctx.ups.get(ctx.ups.size()-1);
         for(ccParser.UpdatesContext upd : ctx.ups){
             main.updates.putIfAbsent(upd.start.getText(), "0");
             main.updatesCtx.putIfAbsent(upd.start.getText(), upd);
+            if(upd.equals(endCtx)){
+                output+=upd.getText();
+            }else{
+                output+=upd.getText()+",";
+            }
         }
         return output;
     }
@@ -150,10 +174,12 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitSimulate(ccParser.SimulateContext ctx) {
+        String output = "";
         for(ccParser.SimulationsContext sim : ctx.sims){
+            output+=ctx.stop.getText();
             visit(sim);
         }
-        return null;
+        return output;
     }
 
     @Override
@@ -170,12 +196,10 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
                 setLatches(update.getKey(),res);
                 setVariable(update.getKey(),res);
                 buildOutPut(update.getKey(),res);
-                //System.out.println(res);
-                //latch.setValue(main.updates.get(latch.getKey().substring(0,latch.getKey().length()-1)));
             }
         }
 
-        printOutput();
+        //printOutput();
 
         return null;
     }
@@ -325,6 +349,26 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         }
     }
 
+    private String getHtmlEntity(String operator){
+        if(operator.equalsIgnoreCase("->")){
+            return "&rarr;";
+        }else if(operator.equalsIgnoreCase("&&")){
+            return "&and;";
+        }else if(operator.equalsIgnoreCase("||")){
+            return "&or;";
+        } else if(operator.equalsIgnoreCase("!")){
+            return "&not;";
+        }else if(operator.equalsIgnoreCase("(")){
+            return "&lpar;";
+        }else if(operator.equalsIgnoreCase(")")){
+            return "&rpar;";
+        }else if(operator.equalsIgnoreCase("=")){
+            return "&equals;";
+        }else{
+            return "";
+        }
+    }
+
     private class CalculationStructure{
         public CalculationStructure(Boolean output, String name, String updateStructure){
             this.output = output;
@@ -345,6 +389,44 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
         }
 
 
+    }
+
+    private class HtmlBody{
+        private String title;
+        private String inputs;
+        private String outputs;
+        private String latches;
+        private String updates;
+        private String simulations;
+        private String simulationOutputs;
+
+        public HtmlBody(String title, String inputs, String outputs, String latches, String updates, String simulations, String simulationOutput) {
+            this.title = title;
+            this.inputs = inputs;
+            this.outputs = outputs;
+            this.latches = latches;
+            this.updates = updates;
+            this.simulations = simulations;
+            this.simulationOutputs = simulationOutput;
+        }
+
+        public String getHtml() {
+            String header = "<!DOCTYPE html>\n" +
+                    "<html><head><title> " + title + "</title>\n" +
+                    "<script src=\"https://polyfill.io/v3/polyfill.min.js?features=es6\"></script>\n" +
+                    "<script type=\"text/javascript\" id=\"MathJax-script\"\n" +
+                    "async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js\">\n" +
+                    "</script></head><body>";
+            String hardware = "<h1>" + title + "</h1>";
+            String input = "<h2> Inputs </h2>" + "<br>" + inputs;
+            String output = "<h2> Outputs </h2>" + "<br>" + outputs;
+            String latch = "<h2> Latches </h2>" + "<br>" + latches + "<br>";
+            String update = "<h2> Updates </h2>" + "<br>" + updates + "<br>";
+            String simulate = "<h2> Simulation inputs </h2>" + "<br>" + "<b>" + inputs + "<b>" + ":" + simulations + "<br>";
+            String simulationOutput = "<h2> Simulation outputs </h2>" + "<br>" + simulationOutputs;
+            String footer = "</body></html>";
+            return header + "\n" + hardware + "\n" + input + "\n" + output + "\n" + latch + "\n" + update + "\n" + simulate + "\n" + simulationOutput + footer;
+        }
     }
 
 
