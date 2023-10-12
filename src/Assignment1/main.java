@@ -13,13 +13,15 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class main {
     public static HashMap<String,String> inputs = new HashMap<>();
-    public static HashMap<String,String> outputs = new HashMap<>();
+    public static LinkedHashMap<String,String> outputs = new LinkedHashMap<>(); //Use LinkedHashMap to preserver the insertion order
     public static HashMap<String,String> latches = new HashMap<>();
-    public static HashMap<String,String> updates = new HashMap<>();
+    public static LinkedHashMap<String,String> updates = new LinkedHashMap<>();
+    public static HashMap<String,ccParser.UpdatesContext> updatesCtx = new HashMap<>();
+
     public static void main(String[] args) throws IOException {
 
         // we expect exactly one argument: the name of the input file
@@ -82,6 +84,7 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
         latches = visit(ctx.l);
         update = visit(ctx.u);
+        System.out.println(update);
         simulate = visit(ctx.s);
 
         return hardware + input + output + latches + update + simulate;
@@ -117,38 +120,32 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitLatch(ccParser.LatchContext ctx) {
-        ParseTree p;
-        if(!ctx.children.isEmpty()){
-            p = ctx.children.remove(0);
-        }else{
-            return visit(ctx.getParent().getChild(0));
+        String output = "";
+        for(ccParser.LatchesContext lat : ctx.latches()){
+            output += visit(lat) + "\n";
         }
-
-        if(p.getText().equalsIgnoreCase(".latches")){
-            p = ctx.children.remove((0));
-        }
-        return visit(p);
+        return output;
     }
 
     @Override
     public String visitLatches(ccParser.LatchesContext ctx) {
         main.latches.putIfAbsent(ctx.stop.getText(), "0");
-        return visit(ctx.getParent());
+        return ctx.start.getText()+"->"+ctx.stop.getText();
     }
 
     @Override
     public String visitUpdate(ccParser.UpdateContext ctx) {
+        String output = "";
         for(ccParser.UpdatesContext upd : ctx.ups){
-            visit(upd);
+            main.updates.putIfAbsent(upd.start.getText(), "0");
+            main.updatesCtx.putIfAbsent(upd.start.getText(), upd);
         }
-        return null;
+        return output;
     }
 
     @Override
     public String visitUpdates(ccParser.UpdatesContext ctx) {
-        ccParser.ExpContext s = ctx.exp();
-        visit(s);
-        return null;
+        return visit(ctx.exp());
     }
 
     @Override
@@ -163,12 +160,22 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     public String visitSimulations(ccParser.SimulationsContext ctx) {
         //environment.setSim(ctx.getText)
         //visit()
-        for (int i = 0; i < ctx.getText().length(); i++){
-
-            for(var latch : main.latches.entrySet()){
-                latch.setValue(main.updates.get(latch.getKey().substring(0,latch.getKey().length()-1)));
+        char[] values = ctx.stop.getText().toCharArray();
+        for (int i = 0; i < values.length; i++){
+            String val = String.valueOf(values[i]);
+            main.inputs.replaceAll((k, v) -> val);
+            for(var update : main.updates.entrySet()){
+                ccParser.UpdatesContext updCtx = main.updatesCtx.get(update.getKey());
+                String res = visit(updCtx);
+                setLatches(update.getKey(),res);
+                setVariable(update.getKey(),res);
+                buildOutPut(update.getKey(),res);
+                //System.out.println(res);
+                //latch.setValue(main.updates.get(latch.getKey().substring(0,latch.getKey().length()-1)));
             }
         }
+
+        printOutput();
 
         return null;
     }
@@ -180,14 +187,13 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
 
     @Override
     public String visitVariable(ccParser.VariableContext ctx) {
-        ctx.IDENTIFIER();
-
-        return null;
+        String varName = ctx.IDENTIFIER().getText();
+        return getVariable(varName);
     }
 
     @Override
     public String visitParathesis(ccParser.ParathesisContext ctx) {
-        return null;
+        return visit(ctx.e);
     }
 
     @Override
@@ -252,6 +258,72 @@ class Interpreter extends AbstractParseTreeVisitor<String> implements ccVisitor<
     public Double visitParen(ccParser.ParenContext ctx){
         System.out.println("Parentheses");
         return visit(ctx.e);}*/
+
+    private String getVariable(String varName) {
+        if(main.updates.containsKey(varName)){
+            return getBool(main.updates.get(varName));
+        }else if(main.outputs.containsKey(varName)){
+            return getBool(main.outputs.get(varName));
+        }else if(main.inputs.containsKey(varName)){
+            return getBool(main.inputs.get(varName));
+        }else if(main.latches.containsKey(varName)){
+            return getBool(main.latches.get(varName));
+        }
+        return "0";
+    }
+
+    private void setVariable(String varName, String val) {
+        val = getBinary(val);
+        if(main.updates.containsKey(varName)){
+            main.updates.replace(varName,val);
+        }else if(main.outputs.containsKey(varName)){
+            main.outputs.replace(varName,val);
+        }else if(main.inputs.containsKey(varName)){
+            main.inputs.replace(varName,val);
+        }else if(main.latches.containsKey(varName)){
+            main.latches.replace(varName,val);
+        }
+    }
+
+    private String getBool(String value) {
+        if(value.equalsIgnoreCase("1")){
+            return "true";
+        }else{
+            return "false";
+        }
+    }
+
+    private String getBinary(String val){
+        if(val.equalsIgnoreCase("true")){
+            return "1";
+        }else{
+            return "0";
+        }
+    }
+
+    private void setLatches(String key,String val) {
+        val = getBinary(val);
+        if(main.latches.containsKey(key+"M")){
+            main.latches.replace(key+"M",val);
+        }
+    }
+
+    private void buildOutPut(String key, String res) {
+        String old = main.outputs.get(key);
+        old+=getBinary(res);
+        main.outputs.replace(key,old);
+    }
+
+    private void printOutput() {
+        for(var out : main.outputs.entrySet()){
+            char[] arr = main.outputs.get(out.getKey()).toCharArray();
+            String line = "";
+            for(char c : arr){
+                line+=c;
+            }
+            System.out.println(line + " " + out.getKey());
+        }
+    }
 
     private class CalculationStructure{
         public CalculationStructure(Boolean output, String name, String updateStructure){
